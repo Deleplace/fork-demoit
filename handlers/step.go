@@ -21,6 +21,7 @@ import (
 	"fmt"
 	"html/template"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"path/filepath"
 	"strconv"
@@ -29,6 +30,7 @@ import (
 	"github.com/dgageot/demoit/flags"
 	"github.com/dgageot/demoit/templates"
 	"github.com/gorilla/mux"
+	"github.com/jaschaephraim/lrserver"
 )
 
 // Page describes a page of the demo.
@@ -42,6 +44,11 @@ type Page struct {
 	StepCount   int
 	DevMode     bool
 }
+
+// LiveReloadPort is the port used for live-reload of page contents, on change.
+// Default is 35729.
+// Can be set to an alternative value, before rendering.
+var LiveReloadPort uint16 = lrserver.DefaultPort
 
 // Step renders a given page.
 func Step(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +70,9 @@ func Step(w http.ResponseWriter, r *http.Request) {
 	}
 
 	step := steps[id]
-	pageTemplate, err := template.New("page").Parse(templates.Index(step.HTML))
+	pageTemplate, err := template.New("page").
+		Funcs(template.FuncMap{"lrport": func() uint16 { return LiveReloadPort }}).
+		Parse(templates.Index(step.HTML))
 	if err != nil {
 		http.Error(w, "Unable to parse page", http.StatusInternalServerError)
 		return
@@ -72,6 +81,7 @@ func Step(w http.ResponseWriter, r *http.Request) {
 	var html bytes.Buffer
 	err = pageTemplate.Execute(&html, step)
 	if err != nil {
+		log.Println(err)
 		http.Error(w, "Unable to render page", http.StatusInternalServerError)
 		return
 	}

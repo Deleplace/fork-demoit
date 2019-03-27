@@ -19,15 +19,17 @@ package files
 import (
 	"fmt"
 	"log"
+	"net"
 	"path/filepath"
+	"strconv"
 	"time"
 
 	"github.com/jaschaephraim/lrserver"
 	"github.com/radovskyb/watcher"
 )
 
-func Watch(root string) error {
-	lr := lrserver.New(lrserver.DefaultName, lrserver.DefaultPort)
+func Watch(root string, port uint16) error {
+	lr := lrserver.New(lrserver.DefaultName, port)
 	go func() {
 		log.Fatal(lr.ListenAndServe())
 	}()
@@ -60,4 +62,33 @@ func Watch(root string) error {
 	}
 
 	return nil
+}
+
+func LiveReloadPort() uint16 {
+	port := lrserver.DefaultPort
+	for {
+		if isPortAvailable(port) {
+			break
+		}
+		// If port is already in use (e.g. another Demoit instance), then
+		// choose an alternative port
+		log.Println("\tCan't use live reload port", port, "(already in use)")
+		port++
+		if port == lrserver.DefaultPort+10 {
+			log.Fatalln("Couldn't find a live reload port after 10 attempts")
+		}
+	}
+	return port
+}
+
+func isPortAvailable(port uint16) bool {
+	portstr := strconv.Itoa(int(port))
+	conn, err := net.DialTimeout("tcp", net.JoinHostPort("", portstr), time.Second)
+	_ = err
+	if conn != nil {
+		// Connection established means "Port was already in use!"
+		conn.Close()
+		return false
+	}
+	return true
 }

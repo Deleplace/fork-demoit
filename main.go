@@ -65,7 +65,9 @@ func main() {
 }
 
 func startFileWatch(root string) {
-	log.Fatal(files.Watch(root))
+	lrport := files.LiveReloadPort()
+	handlers.LiveReloadPort = lrport
+	log.Fatal(files.Watch(root, lrport))
 }
 
 func startWebServer(r http.Handler) {
