@@ -139,3 +139,20 @@ em {
     font-style: normal;
     color: rgb(0,122,204);
 }
+
+#speaker-notes {
+    /* Hidden by default. Toggled by /speakernotes. */
+    display: none;
+
+    position: fixed;
+    width: 70%;
+    height: 70%;
+    top: 0;
+    left: 0;
+    background-color: #EEEE;
+    margin: 15%;
+    border: 4px solid #CCC;
+    border-radius: 2rem;
+    justify-content: center;
+    align-items: center;
+}

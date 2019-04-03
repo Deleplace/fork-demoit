@@ -75,9 +75,12 @@ func Step(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unable to render page", http.StatusInternalServerError)
 		return
 	}
+	htmlBytes := html.Bytes()
 
 	w.Header().Set("Content-Type", "text/html")
-	html.WriteTo(w)
+	w.Write(htmlBytes)
+
+	syncSpeakerNotes(id, htmlBytes)
 }
 
 func readSteps(folder string) ([]Page, error) {

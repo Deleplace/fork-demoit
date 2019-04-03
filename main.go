@@ -50,6 +50,7 @@ func main() {
 	r.PathPrefix("/images/").HandlerFunc(handlers.Static).Methods("GET")
 	r.HandleFunc("/style.css", handlers.Static).Methods("GET")
 	r.HandleFunc("/favicon.ico", handlers.Static).Methods("GET")
+	r.HandleFunc("/speakernotes", handlers.SpeakerNotes).Methods("GET")
 
 	// Fail fast, in case we're not in a cromulent directory
 	if err := handlers.VerifyStepsFile(); err != nil {
