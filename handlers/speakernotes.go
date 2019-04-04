@@ -34,21 +34,31 @@ func SpeakerNotes(w http.ResponseWriter, r *http.Request) {
 
 	snStateLock.Lock()
 	stepHTML := currentStepHTML
+	stepID := currentStepID
 	snStateLock.Unlock()
 
 	if stepHTML == nil {
 		w.Header().Set("Content-Type", "text/html")
+		fmt.Fprintln(w, "<meta http-equiv=\"refresh\" content=\"1\" />")
 		fmt.Fprintln(w, "&lt; Speaker Notes: no steps displayed yet &gt;")
 		// TODO maybe serve step 0?
-		fmt.Fprint(w, speakerNotesTrailer)
 		return
 	}
 
 	w.Header().Set("Content-Type", "text/html")
 	w.Write(stepHTML)
-	fmt.Fprintf(w, "\n\n<script>var currentStepID = %d;</script>", currentStepID)
+	fmt.Fprintf(w, "\n\n<script>var currentStepID = %d;</script>", stepID)
 	fmt.Fprint(w, speakerNotesTrailer)
 	// Now serve JS to reveal Speaker Notes
+}
+
+// CurrentStepID returns the "current" StepID.
+// It is used to reduce FOUC by reloading the Speaker Notes page only
+// when the step has actually changed.
+func CurrentStepID(w http.ResponseWriter, r *http.Request) {
+	snStateLock.Lock()
+	fmt.Fprintln(w, currentStepID)
+	snStateLock.Unlock()
 }
 
 func syncSpeakerNotes(stepID int, stepHTML []byte) {
@@ -91,7 +101,18 @@ const speakerNotesTrailer = `
 	}
 </style>
 <script>
-	// TODO auto-refresh when the main presentation window moves to next step
-	window.setTimeout( () => { location.reload(true); }, 1000);
+	// Auto-refresh when the main presentation window moves to next step
+	window.setInterval( () => { 
+		fetch('/currentstep').then( (response) => {
+			return response.text();
+  		}).then( (serverStepID) => {
+			if (serverStepID == currentStepID) {
+				console.debug("Still " + currentStepID);
+			} else {
+				console.debug("Transition " + currentStepID + " => " + serverStepID);
+				location.reload(true); 
+			}
+		});
+	}, 1000);
 </script>
 `
