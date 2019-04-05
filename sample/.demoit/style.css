@@ -151,8 +151,11 @@ em {
     left: 0;
     background-color: #EEEE;
     margin: 15%;
+    padding-top: 0.8rem;
     border: 4px solid #CCC;
     border-radius: 2rem;
+    /*
     justify-content: center;
+    */
     align-items: center;
 }
