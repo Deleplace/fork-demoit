@@ -69,12 +69,17 @@ func syncSpeakerNotes(stepID int, stepHTML []byte) {
 	currentStepHTML = stepHTML
 
 	// Disable the normal step interactivity
-	stepScript := []byte(`<script src="/js/demoit.js"></script>`)
+	stepScript := []byte(`<script src="/js/demoit.js`)
 	if !bytes.Contains(currentStepHTML, stepScript) {
 		currentStepHTML = []byte("Expected a very specific script tag for demoit.js, couldn't find it.")
 		return
 	}
-	currentStepHTML = bytes.ReplaceAll(currentStepHTML, stepScript, nil)
+	scritTagLen := len(`<script src="/js/demoit.js?hash=419827a85a"></script>`)
+	pos := bytes.Index(currentStepHTML, stepScript)
+	if pos+scritTagLen <= len(currentStepHTML) {
+		scriptTag := currentStepHTML[pos : pos+scritTagLen]
+		currentStepHTML = bytes.ReplaceAll(currentStepHTML, scriptTag, []byte(`<!-- removed demoit.js, no interactivity in speaker notes -->`))
+	}
 
 	// TODO server push new state to currently open Speaker Notes clients.
 	// Or just let them poll.
