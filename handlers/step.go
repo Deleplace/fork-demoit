@@ -56,7 +56,7 @@ func Step(w http.ResponseWriter, r *http.Request) {
 	id := 0
 	if vars["id"] != "" {
 		id, err = strconv.Atoi(vars["id"])
-		if err != nil {
+		if err != nil || id >= len(steps) {
 			http.NotFound(w, r)
 			return
 		}
@@ -81,6 +81,17 @@ func Step(w http.ResponseWriter, r *http.Request) {
 	w.Write(htmlBytes)
 
 	syncSpeakerNotes(id, htmlBytes)
+}
+
+// LastStep redirects to the latest page.
+func LastStep(w http.ResponseWriter, r *http.Request) {
+	steps, err := readSteps(files.Root)
+	if err != nil {
+		http.Error(w, fmt.Sprintf("Unable to read steps: %v", err), http.StatusInternalServerError)
+		return
+	}
+
+	http.Redirect(w, r, fmt.Sprintf("/%d", len(steps)-1), 303)
 }
 
 func readSteps(folder string) ([]Page, error) {

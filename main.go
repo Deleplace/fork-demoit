@@ -41,6 +41,7 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/{id:[0-9]*}", handlers.Step).Methods("GET")
+	r.HandleFunc("/last", handlers.LastStep).Methods("GET")
 	r.PathPrefix("/sourceCode/").HandlerFunc(handlers.Code).Methods("GET")
 	r.HandleFunc("/shell/", handlers.Shell).Methods("GET")
 	r.HandleFunc("/shell/{folder}", handlers.Shell).Methods("GET")
@@ -50,6 +51,7 @@ func main() {
 	r.PathPrefix("/images/").HandlerFunc(handlers.Static).Methods("GET")
 	r.HandleFunc("/style.css", handlers.Static).Methods("GET")
 	r.HandleFunc("/favicon.ico", handlers.Static).Methods("GET")
+	r.HandleFunc("/qrcode", handlers.QRCode).Methods("GET")
 	r.HandleFunc("/speakernotes", handlers.SpeakerNotes).Methods("GET")
 	r.HandleFunc("/currentstep", handlers.CurrentStepID).Methods("GET")
 
@@ -72,9 +74,8 @@ func startFileWatch(root string) {
 
 func startWebServer(r http.Handler) {
 	addr := flags.WebServerAddress()
-	port := *flags.WebServerPort
 
-	log.Printf("Welcome to DemoIt. Please, open http://localhost:%d", port)
+	log.Printf("Welcome to DemoIt. Please, open %s", "http://"+addr)
 	if !*flags.DevMode {
 		log.Printf("\"Dev Mode\" to live reload your slides can be enabled with '--dev'")
 	}

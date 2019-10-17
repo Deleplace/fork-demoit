@@ -14,26 +14,44 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-body {
-    text-align: center;
+html, body, #top {
     margin: 0;
     padding: 0;
-    font-size: 2rem;
-    font-family: sans-serif;
-    color: rgb(51, 51, 51);
+    background-color: black;
+
+    --color-text: rgb(61, 64, 67);
+    --color-main: rgb(66,133,244);
+}
+
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#top {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    height: calc(100vw * 9 / 16);
+    overflow: hidden;
+    text-align: center;
 }
 
 h1 {
-    margin-top: 0;
-    position: absolute;
-    top: 30px;
-    left: 0px;
-    text-align: left;
-    background: rgb(50, 109, 230);
-    width: calc(100% - 70px);
-    padding: 20px;
+    background: var(--color-main);
+    width: calc(100% - 6vw);
+    padding: 2vw;
     overflow: hidden;
     white-space: nowrap;
+    text-align: left;
     text-overflow: ellipsis;
     border-radius: 0 8px 8px 0;
     text-transform: none;
@@ -41,103 +59,60 @@ h1 {
     color: white;
 }
 
-h2, h3 {
+h2, h3, h4, h5, h6 {
     margin-top: 0;
 }
 
+h2 {
+    font-size: 4vw;
+}
+
+h2:first-of-type {
+    margin-top: 10vw;
+}
+
 img {
-    margin: 0 auto;
-    max-height: 70%;
-    max-width: 70%;
+    height: 80%;
+    width: auto;
 }
 
 .logos {
-    display: flex;
-    margin: 30px auto 0 auto;
-    width: 100%;
+    width: 80%;
+    margin: 7vw auto;
+    text-align: center;
 }
 
 a, a:visited {
-    color: rgb(0,122,204);
+    color: var(--color-main);
 	text-decoration: none;
 }
 
-
-#top {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100vh;
-    width: calc(100% - 40px);
-    margin: 0 auto;
-    padding-top: 1.5em;
-}
-
-.split {
-    display: flex;
-    height: calc(100% - 8em);
-}
-
-web-term, web-browser, source-code {
-    flex: 1;
-}
-
-web-term:first-child, web-browser:first-child, source-code:first-child {
-    margin-right: 5px;
-}
-
-web-term:last-child, web-browser:last-child, source-code:last-child {
-    margin-left: 5px;
-}
-
-web-term:only-child, web-browser:only-child, source-code:only-child {
-    margin: 0;
-}
-
-#nav {
-	position: absolute;
-	bottom: 10px;
-	right: 10px;
-}
-
-#nav a {
-    width: 48px;
-    height: 48px;
-    display: inline-block;
-    border-radius: 24px;
-    line-height: 48px;
-    cursor: pointer;
-    font-size: 18px;
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: rgb(0,122,204);
-    color: white !important;
-    font-weight: bold;
-}
-
-#nav a:hover {
-    background-color: rgb(50, 109, 230);
-}
-
-#nav a.disabled {
-	pointer-events: none;
-	cursor: default;
-	visibility: hidden;
-}
-
-#progression {
-    height: 5px;
-    background-color: rgb(50, 109, 230);
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 10;
-    display: block;
-    border-radius: 0 2px 2px 0;
+split-view {
+    height: calc(100% - 13vw);
+    padding: 0 2vw;
 }
 
 em {
     font-style: normal;
-    color: rgb(0,122,204);
+    color: var(--color-main);
+}
+
+#progression {
+    position: absolute;
+    height: 6px;
+    bottom: calc((100vh - (100vw * 9 / 16)) / 2);
+    left: 0;
+    background-color: black;
+    border-radius: 0 3px 3px 0;
+    opacity: .4;
+}
+
+#qr {
+    position: absolute;
+    right: 1vw;
+    bottom: 1vw;
+    width: 15vw;
+    height: auto;
 }
 
 #speaker-notes {
