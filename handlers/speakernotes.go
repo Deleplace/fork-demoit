@@ -118,7 +118,10 @@ const speakerNotesTrailer = `
 				location.reload(true); 
 			}
 		});
-	}, 1000);
+	}, 500);
+
+	// Page title
+	document.title = 'Notes ' + currentStepID;
 
 	// Keep user line breaks from user speaker notes.
 	let sn = document.getElementById("speaker-notes");
