@@ -119,5 +119,9 @@ const speakerNotesTrailer = `
 			}
 		});
 	}, 1000);
+
+	// Keep user line breaks from user speaker notes.
+	let sn = document.getElementById("speaker-notes");
+	sn.innerHTML = sn.innerHTML.replace(new RegExp('\n', 'g'), ' <br/>\n');
 </script>
 `
