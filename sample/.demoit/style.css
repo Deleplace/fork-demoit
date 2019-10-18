@@ -124,6 +124,7 @@ em {
     height: 70%;
     top: 0;
     left: 0;
+    z-index: 999;
     background-color: #EEEE;
     margin: 15%;
     padding-top: 0.8rem;

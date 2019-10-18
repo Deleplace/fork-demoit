@@ -99,7 +99,7 @@ var (
 const speakerNotesTrailer = `
 <style>
 	#speaker-notes {
-		display: flex;
+		display: block;
 	}
 	#nav {
 		display: none;
