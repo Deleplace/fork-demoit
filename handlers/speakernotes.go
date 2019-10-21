@@ -126,5 +126,28 @@ const speakerNotesTrailer = `
 	// Keep user line breaks from user speaker notes.
 	let sn = document.getElementById("speaker-notes");
 	sn.innerHTML = sn.innerHTML.replace(new RegExp('\n', 'g'), ' <br/>\n');
+
+	const channel = new BroadcastChannel("demoit_nav");
+	// Capture keydown events, and notify main tab accordingly
+	document.addEventListener('keydown', event => {
+		let dest = "";
+		switch (event.key) {
+			case 'ArrowRight':
+			case 'PageDown':
+			case ' ':
+				dest = NextURL;
+				console.log("BroadcastChannel post [" + dest + "]");
+				channel.postMessage(dest);
+				break;
+			case 'ArrowLeft':
+			case 'PageUp':
+				dest = PrevURL;
+				console.log("BroadcastChannel post [" + dest + "]");
+				channel.postMessage(dest);
+				break;
+			default:
+				return;
+		}
+	});
 </script>
 `
