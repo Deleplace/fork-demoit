@@ -125,7 +125,8 @@ const speakerNotesTrailer = `
 
 	// Keep user line breaks from user speaker notes.
 	let sn = document.getElementById("speaker-notes");
-	sn.innerHTML = sn.innerHTML.replace(new RegExp('\n', 'g'), ' <br/>\n');
+	if(sn)
+		sn.innerHTML = sn.innerHTML.replace(new RegExp('\n', 'g'), ' <br/>\n');
 
 	const channel = new BroadcastChannel("demoit_nav");
 	// Capture keydown events, and notify main tab accordingly
