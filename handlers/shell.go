@@ -70,6 +70,20 @@ func commands(path string) ([]string, error) {
 	}
 	fmt.Println("Using shell", shell)
 
+	prefill := "ls /" // TODO extract command from <web-term> contents
+	escape := func(command string) string {
+		return fmt.Sprintf("%q", command)
+	}
+	if prefill != "" {
+		tmpfile, err := ioutil.TempFile("", "demoit-init-")
+		if err == nil {
+			_, err := tmpfile.WriteString(`read -p "${PS1@P}" -i ` + escape(prefill) + ` -e prefill && history -n && history -s ${prefill} && ${prefill}`)
+			if err == nil {
+				shell += " --init-file " + tmpfile.Name()
+			}
+		}
+	}
+
 	// Source custom .bashrc
 	bashRc, err := filepath.Abs(filepath.Join(files.Root, ".demoit", ".bashrc"))
 	if err != nil {
