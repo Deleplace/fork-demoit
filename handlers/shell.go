@@ -40,7 +40,11 @@ func Shell(w http.ResponseWriter, r *http.Request) {
 		path += "/" + folder
 	}
 
-	commands, err := commands(path)
+	// Optional pre-filled command
+	// The user may hit Enter to execute it
+	prefillCommand := r.FormValue("cmd")
+
+	commands, err := commands(path, prefillCommand)
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, err.Error(), 500)
@@ -61,7 +65,7 @@ func Shell(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, url, 303)
 }
 
-func commands(path string) ([]string, error) {
+func commands(path, prefillCommand string) ([]string, error) {
 	commands := []string{"cd " + path}
 
 	shell, found := os.LookupEnv("SHELL")
@@ -69,20 +73,6 @@ func commands(path string) ([]string, error) {
 		shell = "bash"
 	}
 	fmt.Println("Using shell", shell)
-
-	prefill := "ls /" // TODO extract command from <web-term> contents
-	escape := func(command string) string {
-		return fmt.Sprintf("%q", command)
-	}
-	if prefill != "" {
-		tmpfile, err := ioutil.TempFile("", "demoit-init-")
-		if err == nil {
-			_, err := tmpfile.WriteString(`read -p "${PS1@P}" -i ` + escape(prefill) + ` -e prefill && history -n && history -s ${prefill} && ${prefill}`)
-			if err == nil {
-				shell += " --init-file " + tmpfile.Name()
-			}
-		}
-	}
 
 	// Source custom .bashrc
 	bashRc, err := filepath.Abs(filepath.Join(files.Root, ".demoit", ".bashrc"))
@@ -92,6 +82,24 @@ func commands(path string) ([]string, error) {
 	if _, err := os.Stat(bashRc); err == nil {
 		fmt.Println("Using bashrc file", bashRc)
 		commands = append(commands, fmt.Sprintf("source %s", bashRc))
+	}
+
+	if prefillCommand != "" {
+		escape := func(command string) string {
+			return fmt.Sprintf("%q", command)
+		}
+		tmpfile, err := ioutil.TempFile("", "demoit-init-")
+		if err == nil {
+			ps1 := os.Getenv("PS1")
+			_, err := tmpfile.WriteString(
+				`export PS1=` + escape(ps1) + `;` +
+					` read -p "${PS1@P}" -i ` + escape(prefillCommand) + ` -e prefill ` +
+					` && history -n ` +
+					` && history -s ${prefill} && ${prefill}`)
+			if err == nil {
+				shell += " --init-file " + tmpfile.Name()
+			}
+		}
 	}
 
 	// Bash history needs to be copied because it's going to be

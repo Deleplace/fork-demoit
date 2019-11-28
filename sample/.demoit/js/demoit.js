@@ -395,7 +395,7 @@ class WebTerm extends BaseHTMLElement {
         div.innerHTML = `
         <fake-window title="bash ~ ${this.path}">
             <a slot="bar" class="newtab" href="#">+</a>
-            <iframe scrolling="no" src="/shell/${this.path}"></iframe>
+            <iframe scrolling="no" src="/shell/${this.path}?cmd=${this.innerHTML}"></iframe>
         </fake-window>`;
 
         const window = this.shadowRoot.appendChild(div.lastChild);
